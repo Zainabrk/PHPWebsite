@@ -1,0 +1,305 @@
+<?php
+ /**
+ * A PHTML file which contains the Information visualization
+ */
+ 
+/**
+ * A Template which contains the Information visualization
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="info" class="mdl-grid">
+		<?php
+		if( is_array( Main::$Display->get('result') ) ){
+			$res = Main::$Display->get('result');
+			$post = Main::$Config->get('post');
+		?>
+
+			<div id="info-title" class="mdl-cell mdl-cell--11-col-desktop mdl-grid">
+				<?php  echo $res['title'];  ?>
+			</div>
+			<div class="mdl-cell mdl-cell--1-col-desktop mdl-grid">
+				<form method="post">
+					<?php if( isset( $_SESSION['selectetdPdfs'][$res['id']] ) && $_SESSION['selectetdPdfs'][$res['id']] == 1 ){ ?>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="info-switch" name="info-switch[<?php echo $res['id']; ?>]" formaction="Info?id=<?php echo $res['id']; ?>" value="0">
+							<i class="material-icons">favorite_border</i>
+						</button>
+						<div class="mdl-tooltip" for="info-switch">Favorite entfernen</div>
+					<?php } else {?>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="info-switch" name="info-switch[<?php echo $res['id']; ?>]" formaction="Info?id=<?php echo $res['id']; ?>" value="1">
+							<i class="material-icons">favorite</i>
+						</button>
+						<div class="mdl-tooltip" for="info-switch">Favorite hinzufügen</div>
+					<?php }?>
+				</form>
+			</div>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+				<div  class="mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop">
+					<?php if( !is_null($res['subject'])){ ?>
+					<div id="info-subject">
+						<span class="docs-text-styling">
+							<h1>Thema</h1>
+						 </span>
+						<div class="subject"><?php echo $res['subject']; ?></div>
+					</div>
+					<?php } ?>
+					<?php if( Main::$Display->get('authors') !== false ){ ?>
+					<div id="info-authors">
+						<span class="docs-text-styling">
+							<h1>Autor/en</h1>
+						 </span>
+						<div class="authors">
+							<ul>
+							<?php foreach( Main::$Display->get('authors') as $author ){ ?>
+								<li class="author"><a href="Author?id=<?php echo $author['id']; ?>"><?php echo $author['author']; ?></a></li>							
+							<?php }; ?>
+							</ul>
+						</div>
+					</div>
+					<?php } ?>
+					<?php if( !is_null($res['language'])){ ?>
+					<div id="info-language">
+						<span class="docs-text-styling">
+							<h1>Sprache</h1>
+						 </span>
+						 <div class="language"><?php echo Locale::getDisplayLanguage($res['language']); ?></div>
+					</div>
+					<?php } ?>
+					<?php if( !is_null($res['date']) ){ ?>
+					<div id="info-date">
+						<span class="docs-text-styling">
+							<h1>Datum</h1>
+						 </span>
+						 <div class="date"><?php if( strtotime($res['date'] ) ) {
+								echo date("d.m.Y", strtotime($res['date'])); 
+							 }else{
+								 echo $res['date']; 
+							 }
+							 ?></div>
+					</div>
+					<?php } ?>
+					<?php if( !is_null($res['keywords'])){ ?>
+					<div id="info-keywords">
+						<span class="docs-text-styling">
+							<h1>Keywords</h1>
+						 </span>
+						 <div class="keywords"><?php echo implode( json_decode($res['keywords']), ' • ' ); ?></div>
+					</div>
+					<?php } ?>
+				</div>
+			</div>
+			<?php if( !is_null($res['abstract'])){ ?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+				<div id="info-abstract" class="mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop">
+					<span class="docs-text-styling">
+						<h1>Abstrakt</h1>
+					 </span>
+					 <div class="abstract"><?php echo $res['abstract']; ?></div>
+				</div>
+			</div>
+			<?php } ?>
+			<div id="info-preview" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+				<span class="docs-text-styling">
+					<h1>Vorschau PDF</h1>
+				</span>
+				<object width="400" height="500" type="application/pdf" data="/ba/Documents/<?php echo $res['filename']; ?>" id="pdf_content">
+					<p>Insert your error message here, if the PDF cannot be displayed.</p>
+				</object>
+			</div>
+			<div id="info-preview-raw" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col mdl-grid mdl-cell--top">
+				<span class="docs-text-styling">
+					<h1>Vorschau Text </h1>
+				</span>
+				<textarea><?php echo $res['raw']; ?></textarea>
+			</div>
+			<?php if( Main::$Display->get('map') !== false ){ ?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+				<div id="info-map" class="mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop">
+					<span class="docs-text-styling">
+						<h1>Landkarte</h1>
+					 </span>
+					 
+					<div id="map"></div>
+					<script>
+						var zero = new google.maps.LatLng(30, 0);
+
+						map = new google.maps.Map(document.getElementById('map'), {
+							center: zero,
+							streetViewControl: false,
+							zoom: 2,
+							mapTypeId: google.maps.MapTypeId.ROADMAP
+						});
+						<?php foreach( Main::$Display->get('map') as $res ){ ?>
+							new google.maps.Marker({position: new google.maps.LatLng( <?php echo $res['lat']; ?>, <?php echo $res['lng']; ?>), map: map });
+						<?php } ?>
+					</script>
+				</div>
+			</div>
+			<?php } ?>
+			<?php if( Main::$Display->get('words') !== false ){ ?>
+			<div id="info-wordlist" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
+				<span class="docs-text-styling">
+					<h1>Wortliste</h1>
+				 </span>
+				 <div class="wordlist">
+					<table class="mdl-data-table mdl-js-data-table" id="full-list-table">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Wort</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( Main::$Display->get('words') as $word ){ ?>
+							 <tr>
+								<td class="mdl-data-table__cell--non-numeric">
+									<a href="Word?word=<?php echo $word['word']; ?>">
+										<?php echo $word['word']; ?>
+									</a>
+								</td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						<?php } ?>
+						</tbody>
+					</table>
+					<table class="mdl-data-table mdl-js-data-table" style="display:none;" id="abstract-list-table">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Wort</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( Main::$Display->get('words_A') as $word ){ ?>
+							 <tr>
+								<td class="mdl-data-table__cell--non-numeric">
+									<a href="Word?word=<?php echo $word['word']; ?>">
+										<?php echo $word['word']; ?>
+									</a>
+								</td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						<?php } ?>
+						</tbody>
+					</table>
+				 </div>
+			</div>
+			<?php } ?>
+			<?php if( Main::$Display->get('cloud') !== false ){ 
+			$max = Main::$Display->get('max');
+			$min = Main::$Display->get('min');
+			?>
+			<div class="mdl-cell mdl-cell--9-col mdl-grid mdl-grid--no-spacing">
+				<div id="info-wordcloud" class="mdl-grid mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop mdl-cell--top">
+					<span class="docs-text-styling">
+						<h1>Wordcloud</h1>
+					 </span>
+					 <div class="wordcloud">
+					<?php foreach( Main::$Display->get('cloud') as $row ){
+						$size = ( 100 - 8 ) * ( ( $row['count'] - $min ) / ( $max - $min ) ) + 8; ?>
+						<a class="word" style="font-size:<?php echo $size ?>px;" href="Word?word=<?php echo $row['word']; ?>"><?php echo $row['word']; ?></a>
+					<?php }; ?>
+					</div>				
+				</div>	
+			</div>	
+			<?php } ?>
+			<?php if( Main::$Display->get('ref') !== false ){ ?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+				<div id="info-reference" class="mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop">
+					<span class="docs-text-styling">
+						<h1>Referenzen</h1>
+					 </span>
+					 <div class="reference">
+						<?php 
+							$num = 1;
+							foreach( Main::$Display->get('ref') as $res ){ 
+						?>
+							<div class="ref">
+								<div class="ref-num"><div class="num">[<?php echo $num; ?>]</div></div>
+								<div class="ref-row">
+									<?php echo $res['reference']; ?>
+								</div>
+							</div>
+						<?php 
+							$num++;
+							}; 
+						?>
+					</div>				
+				</div>
+			</div>
+			<?php } ?>
+			<?php if( Main::$Display->get('bib') !== false ){ ?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+				<div id="info-bibdata" class="mdl-cell mdl-cell--4-col mdl-cell--12-col-desktop">
+					<span class="docs-text-styling">
+						<h1>BibTex</h1>
+					 </span>
+					 <div class="bibdata">
+						<?php 
+							$num = 1;
+							foreach( Main::$Display->get('bib') as $res ){ 
+						?>
+							<div class="bib">
+								<div class="bib-num"><div class="num">[<?php echo $num; ?>]</div></div>
+								<div class="bib-row">
+									<?php if ( !is_null( $res['author']) ){
+										$author = json_decode( stripslashes( $res['author'] ) , true );
+										if( !is_null( $author ) ){
+											foreach($author as $name){
+												echo $name['first'] . ' ' . ( isset( $name['von'] ) ? $name['von'] . ' ' : '' ) . $name['last'] . ', ';
+											}
+										}
+									}; ?>
+									<?php echo ( isset( $res['title'] ) ? '<span class="title">' . $res['title'] . '</span>, ' : '' ); ?>
+									<?php echo ( isset( $res['booktitle'] ) ? 'In ' . $res['booktitle'] . ', ' : '' ); ?>
+									<?php echo ( isset( $res['journal'] ) ? $res['journal'] . ', ' : '' ); ?>
+									<?php echo ( isset( $res['year'] ) ? $res['year'] . ', ' : '' ); ?>
+									<?php echo ( isset( $res['publisher'] ) ? $res['publisher'] : '' ); ?>
+								</div>
+							</div>
+						<?php 
+							$num++;
+							}; 
+						?>
+					</div>				
+				</div>
+			</div>
+			<?php } ?>			
+			<?php } elseif( is_array( Main::$Display->get('info') ) ){ ?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div class="mdl-card__title">
+					<h2 class="mdl-card__title-text">Alle Dokumente</h2>
+				</div>
+				<div>
+					<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Title</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( Main::$Display->get('info') as $info ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Info?id=<?php echo $info['id'] ?>"><?php echo $info['title']; ?></a></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<?php } else {
+
+			echo Main::$Display->get('result');
+
+			}?>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>
+

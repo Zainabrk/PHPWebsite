@@ -1,0 +1,69 @@
+<?php
+ /**
+ * A PHTML file which contains the Download
+ */
+ 
+/**
+ * A Template which contains the Download
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="download" class="mdl-grid">
+		<?php
+		if( is_array( Main::$Display->get('download') ) ){
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="downloads">
+					 <div class="mdl-card__title">
+						<h2 class="mdl-card__title-text">Download Dokumente</h2>
+					</div>
+					 <table class="mdl-data-table mdl-js-data-table mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Title</th>
+								<th>
+									<a href="Download?zip=3,4">
+										<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="button" id="zip-download" name="zip-download">
+											<i class="material-icons">archive</i>
+										</button>
+										<div class="mdl-tooltip" for="zip-download">Alle als ZIP Downloaden</div>
+									</a>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( Main::$Display->get('download') as $down ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Info?id=<?php echo $down['id'] ?>"><?php echo $down['title']; ?></a></td>
+								<td>
+									<a href="Documents/<?php echo $down['filename'] ?>">
+										<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" type="button">
+											<i class="material-icons">file_download</i>
+										</button>
+									</a>
+								</td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+				<?php
+		}
+		else{
+
+			echo Main::$Display->get('download');
+
+		}
+		?>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>
+

@@ -1,0 +1,149 @@
+<?php
+ /**
+ * A PHTML file which contains the Wordlist visualization.
+ */
+ 
+/**
+ * A Template which contains the Wordlist visualization
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="word" class="mdl-grid">
+		<?php
+		if( is_array( Main::$Display->get('wordlist') ) ){
+			$res = Main::$Display->get('wordlist');
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="wordlist">
+					 <div class="mdl-card__title">
+						<h2 class="mdl-card__title-text">Wort: <?php  echo Main::$Display->get('word');  ?></h2>
+					</div>
+					 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Title</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( $res as $word ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Info?id=<?php echo $word['id'] ?>"><?php echo $word['title']; ?></a></td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+				<?php
+		}
+		elseif( is_array( Main::$Display->get('wordlist_ids') ) ){
+			$res = Main::$Display->get('wordlist_ids');
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="wordlist">
+					 <div class="mdl-card__title">
+						<h2 class="mdl-card__title-text">Wortliste der Gewählten Dokumente</h2>
+					</div>
+					 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Wort</th>
+								<th class="mdl-data-table__cell--non-numeric">Title</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( $res as $word ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><?php echo $word['word']; ?></td>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Info?id=<?php echo $word['id'] ?>"><?php echo $word['title']; ?></a></td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+				<?php
+		}
+		elseif( is_array( Main::$Display->get('wordlist_id') ) ){
+			$res = Main::$Display->get('wordlist_id');
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="wordlist">
+					 <div class="mdl-card__title">
+						<h2 class="mdl-card__title-text"><?php  echo $res[0]['title'];  ?></h2>
+					</div>
+					 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Wort</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( $res as $word ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><?php echo $word['word']; ?></td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+				<?php
+		}
+		elseif( is_array( Main::$Display->get('wordlist_all') ) ){
+			$res = Main::$Display->get('wordlist_all');
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="wordlist">
+					 <div class="mdl-card__title">
+						<h2 class="mdl-card__title-text">Wortliste aller Dokumente</h2>
+					</div>
+					 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Wort</th>
+								<th class="mdl-data-table__cell--non-numeric">Artikel</th>
+								<th>Anzahl</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( $res as $word ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric">
+									<a href="Word?word=<?php echo $word['word'] ?>"><?php echo $word['word']; ?></a>
+								</td>
+								<td class="mdl-data-table__cell--non-numeric">
+									<a href="Info?id=<?php echo $word['id'] ?>"><?php echo $word['title']; ?></a>
+								</td>
+								<td><?php echo $word['count']; ?></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+				<?php
+		}
+		else{
+
+			echo Main::$Display->get('wordlist');
+
+		}
+		?>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>
+

@@ -1,0 +1,70 @@
+<?php
+ /**
+ * A PHTML file which contains the Selectedt PDFs
+ */
+ 
+/**
+ * A Template which contains the Selectedt PDFs
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-cell mdl-cell--4-col">
+	<div class="selectedpdfs">
+	<?php if( Main::$Display->get('selectetdPdfs') !== false ){ ?>
+		<form name="selectetdPdfs-select" method="post">
+			<span class="docs-text-styling">
+				<h1>Ausgewählte Dokumente</h1>
+			<span/>
+			<div class="table">
+				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="white-space: normal;">
+					<tbody>
+					 <?php foreach( Main::$Display->get('selectetdPdfs') as $res ){ 
+						$idArray[] = $res['id'];
+					 ?>
+						 <tr>
+							<td class="mdl-data-table__cell--non-numeric">
+								<a href="Info?id=<?php echo $res['id']; ?>"><?php echo $res['title']; ?></a>
+							</td>
+							<td class="mdl-data-table__cell--non-numeric checkbox">
+								<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="selectetdPdfs-<?php echo $res['id']; ?>">
+									<input type="hidden" name="selectetdPdfs[<?php echo $res['id']; ?>]" value="0" />
+									<input type="checkbox" id="selectetdPdfs-<?php echo $res['id']; ?>" class="mdl-switch__input" name="selectetdPdfs[<?php echo $res['id']; ?>]" value="1" checked>
+									<span class="mdl-switch__label"></span>
+								</label>
+							</td>
+						</tr>
+					<?php } ?>
+					</tbody>
+				</table>
+			</div>
+			<div class="actions">
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="selectetdPdfs-word" name="selectetdPdfs-word" formaction="Word?ids=<?php echo implode($idArray, ','); ?>" >
+					<i class="material-icons">list</i>
+				</button>
+				<div class="mdl-tooltip" for="selectetdPdfs-word">Wordlist</div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="selectetdPdfs-cloud" name="selectetdPdfs-cloud" formaction="Cloud?ids=<?php echo implode($idArray, ','); ?>" >
+					<i class="material-icons">cloud_queue</i>
+				</button>
+				<div class="mdl-tooltip" for="selectetdPdfs-cloud">Cloud</div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="selectetdPdfs-map" name="selectetdPdfs-map" formaction="Map?ids=<?php echo implode($idArray, ','); ?>" >
+					<i class="material-icons">map</i>
+				</button>
+				<div class="mdl-tooltip" for="selectetdPdfs-map">Map</div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="selectetdPdfs-download" name="selectetdPdfs-download" style="margin-left: 20px;" formaction="Download?ids=<?php echo implode($idArray, ','); ?>">
+					<i class="material-icons">file_download</i>
+				</button>
+				<div class="mdl-tooltip" for="selectetdPdfs-download">Download</div>
+				<div class="mdl-tooltip" for="selectetdPdfs-map">Map</div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="selectetdPdfs-submit" name="selectetdPdfs-submit" style="float: right;">
+					<i class="material-icons">playlist_add_check</i>
+				</button>
+				<div class="mdl-tooltip" for="selectetdPdfs-submit">Übernehmen</div>
+			</div>
+		</form>
+	<?php }	?>
+	</div>
+</div>

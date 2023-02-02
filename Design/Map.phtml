@@ -1,0 +1,258 @@
+<?php
+ /**
+ * A PHTML Template file which contains the Map visualization
+ */
+ 
+/**
+ * A Template which contains the Map visualization
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="word" class="mdl-grid">
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="map-title"></div>
+				 <div class="mdl-card__title">
+					<h2 class="mdl-card__title-text"><?php echo Main::$Display->get('title'); ?></h2>
+				</div>
+				<div id="map"></div>
+				<div class="actions">
+					<form method="post">
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="map-word" name="map-word" formaction="" >
+							<i class="material-icons">list</i>
+						</button>
+						<div class="mdl-tooltip" for="map-word">Wordlist</div>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="map-cloud" name="map-cloud" formaction="" >
+							<i class="material-icons">cloud_queue</i>
+						</button>
+						<div class="mdl-tooltip" for="map-cloud">Cloud</div>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="map-map" name="map-map" formaction="" >
+							<i class="material-icons">map</i>
+						</button>
+						<div class="mdl-tooltip" for="map-map">Map</div>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" id="map-submit" name="map-results-submit" style="float: right;" value="">
+							<i class="material-icons">playlist_add_check</i>
+						</button>
+						<div class="mdl-tooltip" for="map-submit">Übernehmen</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>
+<script>
+
+var zero = new google.maps.LatLng(30, 0);
+
+map = new google.maps.Map(document.getElementById('map'), {
+	center: zero,
+	streetViewControl: false,
+	zoom: 2,
+	mapTypeId: google.maps.MapTypeId.ROADMAP
+});
+
+<?php
+
+$array = array();
+
+if( is_array( Main::$Display->get('locations') ) ){
+
+	foreach( Main::$Display->get('locations') as $res ){
+		
+		$array[] =  "[" . $res['lat'] . "," . $res['lng'] . "," . $res['id'] . ",'" . $res['title'] . "']";
+		
+	}
+}
+elseif( is_array( Main::$Display->get('location') ) ){
+	
+	$res = Main::$Display->get('location');
+	$array[] =  "[" . $res['lat'] . "," . $res['lng'] . "," . $res['id'] . ",'" . $res['title'] . "']";
+	
+}
+
+$out = "var heatmapArray = [" . implode( ',', $array ) . "];";
+
+echo rtrim( $out, ',' );
+
+?>
+
+var heatmapData = [];
+
+for (i = 0; i < heatmapArray.length; i++) {
+	
+	var mark = { position: new google.maps.LatLng( heatmapArray[i][0], heatmapArray[i][1] ), id: heatmapArray[i][2], clickable: true };
+	
+	var infowindow = new google.maps.InfoWindow();
+	
+	var marker = new google.maps.Marker( mark );
+
+	heatmapData.push( marker );
+	
+	google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+			infowindow.setContent( '<a href="Info?id='+heatmapArray[i][2]+'">'+heatmapArray[i][3]+'</a>' );
+			infowindow.open(map, marker);
+		}
+	})(marker, i));
+};
+/*
+var heatmap = new google.maps.visualization.HeatmapLayer({
+	data: heatmapData,
+	map: map
+});
+*/
+
+function AutoCenter() {
+
+	var bounds = new google.maps.LatLngBounds();
+
+	$.each(heatmapData, function (index, marker) {
+		bounds.extend(marker.position);
+	});
+
+	map.fitBounds(bounds);
+}
+//AutoCenter();
+
+var styles = [[{
+	url: './data/images/m1.png',
+	height: 53,
+	width: 53,
+	anchor: [18, 0],
+	textColor: '#000000',
+	textSize: 10
+}, {
+	url: './data/images/m2.png',
+	height: 56,
+	width: 56,
+	anchor: [20, 0],
+	textColor: '#000000',
+	textSize: 11
+}, {
+	url: './data/images/m3.png',
+	height: 66,
+	width: 66,
+	anchor: [22, 0],
+	textColor: '#000000',
+	textSize: 12
+}, {
+	url: './data/images/m4.png',
+	height: 78,
+	width: 78,
+	anchor: [24, 0],
+	textColor: '#000000',
+	textSize: 13
+}, {
+	url: './data/images/m5.png',
+	height: 90,
+	width: 90,
+	anchor: [26, 0],
+	textColor: '#000000',
+	textSize: 14
+}]];
+	  
+var markerCluster = new MarkerClusterer(map, heatmapData, {
+	styles: styles[0]
+});
+
+var drawingManager = new google.maps.drawing.DrawingManager({
+	drawingMode: google.maps.drawing.OverlayType.MARKER,
+	drawingControl: true,
+	drawingMode: false,
+	drawingControlOptions: {
+		position: google.maps.ControlPosition.TOP_CENTER,
+		drawingModes: [
+			google.maps.drawing.OverlayType.CIRCLE,
+			google.maps.drawing.OverlayType.POLYGON,
+			google.maps.drawing.OverlayType.RECTANGLE
+		]
+	},
+	circleOptions: {
+		fillColor: '#efefef',
+		fillOpacity: 0.4,
+		strokeWeight: 5,
+		clickable: false,
+		editable: true,
+		zIndex: 1
+	},
+	polygonOptions: {
+		fillColor: '#efefef',
+		fillOpacity: 0.4,
+		strokeWeight: 5,
+		clickable: false,
+		editable: true,
+		zIndex: 1
+	},
+	rectangleOptions: {
+		fillColor: '#efefef',
+		fillOpacity: 0.4,
+		strokeWeight: 5,
+		clickable: false,
+		editable: true,
+		zIndex: 1
+	},
+	map: map	
+});
+
+google.maps.event.addListener(drawingManager, "overlaycomplete", function( overlayNew ){
+	
+	var lastOverlay = overlayNew.overlay;
+
+	google.maps.event.addListener(drawingManager, 'overlaycomplete', function ( overlayLast ) {
+
+		lastOverlay.setMap(null);
+		
+	});
+	
+});
+
+google.maps.event.addListener(drawingManager, 'overlaycomplete', function( overlay ) {
+	
+	var arr=[];
+	
+	if( overlay.type == 'polygon' ){
+		
+		for (i = 0; i < heatmapData.length; i++) {
+			
+			if ( overlay.overlay.containsLatLng( heatmapData[i]['position'] ) ){
+				
+				arr.push( heatmapData[i]['id'].toString() );
+				
+			}
+		}
+	}
+	else{
+		
+		bounds = overlay.overlay.getBounds();
+		
+		for (i = 0; i < heatmapData.length; i++) {
+			
+			if ( bounds.contains( heatmapData[i]['position'] ) ){
+				
+				arr.push( heatmapData[i]['id'].toString() );
+				
+			}
+		}  
+	}
+	if( arr.length > 0 ){
+		
+		ids = arr.join(',');
+		
+		$('#map-cloud').attr('formaction', 'Cloud?ids='+ids+'&src=map');
+		$('#map-word').attr('formaction', 'Word?ids='+ids+'&src=map');
+		$('#map-map').attr('formaction', 'Map?ids='+ids+'&src=map');
+		
+		$('#map-submit').attr('value', ids);
+		
+		//alert(arr.join(',\n'));
+		
+		
+	}
+});
+</script>

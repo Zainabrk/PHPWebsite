@@ -1,0 +1,94 @@
+<?php
+ /**
+ * A PHTML file which contains the Wordcloud visualization
+ */
+ 
+/**
+ * A Template which contains the Wordcloud visualization
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="cloud" class="mdl-grid">
+		<?php
+		if( is_array( Main::$Display->get('cloud') ) ){
+			$info = Main::$Display->get('info');
+			?>
+				<div id="wordcloud1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+					<div class="mdl-card__title">
+						<h2 class="mdl-card__title-text"><?php  echo $info['title'];  ?></h2>
+					 </div>
+					 <div id="wordcloud">
+					 <?php
+					$max = Main::$Display->get('max');
+					$min = Main::$Display->get('min');
+					
+					foreach( Main::$Display->get('cloud') as $row ){ 
+						$size = ( 100 - 8 ) * ( ( $row['count'] - $min ) / ( $max - $min ) ) + 8;
+					?>
+						<a class="word" style="font-size:<?php echo $size; ?>px;" href="#" id="<?php echo strtolower( $row['word'] ); ?>"><?php echo $row['word']; ?></a>
+						<div class="mdl-tooltip" for="<?php echo strtolower( $row['word'] ); ?>"><?php echo $row['word'] . ': ' . $row['count']; ?></div>
+					<?php }; ?>
+					</div>
+				</div>
+				<?php
+		}
+		elseif( is_array( Main::$Display->get('cloud2') ) ){
+			$info = Main::$Display->get('info');
+			?>
+				<div id="wordcloud1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+					<div class="mdl-card__title">
+						<h2 class="mdl-card__title-text"><?php echo Main::$Display->get('title'); ?></h2>
+					 </div>
+					 <div id="wordcloud">
+					 <?php
+					$max = Main::$Display->get('max');
+					$min = Main::$Display->get('min');
+					
+					foreach( Main::$Display->get('cloud2') as $row ){ 
+						$size = ( 100 - 8 ) * ( ( $row['count'] - $min ) / ( $max - $min ) ) + 8;
+						?>
+						<a class="word" style="font-size:<?php echo $size; ?>px;" href="Info?id=<?php echo $row['id']; ?>"><?php echo $row['word']; ?></a>
+					<?php }; ?>
+					</div>
+				</div>
+				<?php
+		}
+		elseif( is_array( Main::$Display->get('cloud3') ) ){
+			$info = Main::$Display->get('info');
+			?>
+				<div id="wordcloud1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+					<div class="mdl-card__title">
+						<h2 class="mdl-card__title-text">Wordcloud über alle Dokumente</h2>
+					 </div>
+					 <div id="wordcloud">
+					 <?php
+
+					$max = Main::$Display->get('max');
+					$min = Main::$Display->get('min');
+					
+					foreach( Main::$Display->get('cloud3') as $row ){ 
+						$size = ( 100 - 8 ) * ( ( $row['count'] - $min ) / ( $max - $min ) ) + 8;
+						?>
+						<a class="word" style="font-size:<?php echo $size; ?>px;" href="Word?word=<?php echo $row['word']; ?>" id="<?php echo strtolower( $row['word'] ).$row['count']; ?>"><?php echo $row['word']; ?></a>
+						<div class="mdl-tooltip" for="<?php echo strtolower( $row['word'] ). $row['count']; ?>"><?php echo $row['word'] . ': ' . $row['count']; ?></div>
+					<?php }; ?>
+					</div>
+				</div>
+				<?php
+		}
+		else{
+
+			echo Main::$Display->get('wordlist');
+
+		}
+		?>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>

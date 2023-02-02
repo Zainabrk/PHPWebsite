@@ -1,0 +1,15 @@
+##PHP Version im Header ausblenden
+#php_flag expose_php Off
+
+#neue Index.php (.php) für all-inkl
+DirectoryIndex index.php
+
+RewriteEngine on
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]
+
+ErrorDocument 401 /pubscript/http_error_generator.php?e=401
+ErrorDocument 403 /pubscript/http_error_generator.php?e=403
+ErrorDocument 404 /pubscript/http_error_generator.php?e=404

@@ -1,0 +1,93 @@
+<?php
+ /**
+ * A PHTML file which contains the Search
+ */
+ 
+/**
+ * A Template which contains the Search
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<?php
+$post = Main::$Config->get('post');
+?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="search-form">
+			<form action="Search" method="POST">
+				<div id="search-options">
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
+						<input type="radio" id="option-1" class="mdl-radio__button" name="options" value="text" <?php echo ( ( isset( $post['options'] ) && trim( $post['options'] ) == 'text' ) || ( !isset( $post['options'] ) ) || ( $post['options'] == '' ) ? 'checked' : '' ); ?>>
+						<span class="mdl-radio__label">Text</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
+						<input type="radio" id="option-2" class="mdl-radio__button" name="options" value="abstract" <?php echo ( isset( $post['options'] ) && trim( $post['options'] ) == 'abstract' ? 'checked' : '' ); ?>>
+						<span class="mdl-radio__label">Abstrakt</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-3">
+						<input type="radio" id="option-3" class="mdl-radio__button" name="options" value="author" <?php echo ( isset( $post['options'] ) && trim( $post['options'] ) == 'author' ? 'checked' : '' ); ?>>
+						<span class="mdl-radio__label">Autor</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-4">
+						<input type="radio" id="option-4" class="mdl-radio__button" name="options" value="keyword" <?php echo ( isset( $post['options'] ) && trim( $post['options'] ) == 'keyword' ? 'checked' : '' ); ?>>
+						<span class="mdl-radio__label">Keywords</span>
+					</label>
+				</div>
+				<div class="mdl-textfield mdl-js-textfield">
+					<input class="mdl-textfield__input" type="text" id="search" name="search" value="<?php echo ( isset( $post['search'] ) && trim( $post['search'] ) !== '' ? $post['search'] : '' ); ?>">
+					<label class="mdl-textfield__label" for="search">Suchen</label>
+				</div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" name="search-results-submit">Suchen</button>
+			</form>
+		</div>
+		<div id="search-results">
+			<form name="search-results" method="post">
+			<?php
+
+			if( is_array( Main::$Display->get('result') ) ){
+
+				foreach( Main::$Display->get('result') as $res ){ ?>
+					<div class="result search-id-<?php echo $res['id']; ?>">
+						<div class="results">
+							<div class="title"><a href="Info?id=<?php echo $res['id']; ?>"><?php echo $res['title']; ?></a></div>
+							<?php if( !is_null($res['subject'])){ ?><div class="subject"><?php echo $res['subject']; ?></div><?php } ?>
+							<?php if( !is_null($res['author'])){ ?><div class="author"><span>Autoren:</span> <?php echo $res['author']; ?></div><?php } ?>
+							<?php if( !is_null($res['keywords'])){ ?><div class="keywords"><span>Keywords:</span> <?php echo implode( json_decode($res['keywords']), ' • ' ); ?></div><?php } ?>
+							<?php if( !is_null($res['abstract'])){ ?><div class="abstract"><span>Abstract:</span> <?php echo $res['abstract']; ?></div><?php } ?>
+						</div>
+						<div class="results-action">
+							<div class="switcher">
+								<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-<?php echo $res['id']; ?>">
+									<input type="hidden" name="switch[<?php echo $res['id']; ?>]" value="0" />
+									<input type="checkbox" id="switch-<?php echo $res['id']; ?>" class="mdl-switch__input" name="switch[<?php echo $res['id']; ?>]" <?php echo ( isset( $_SESSION['selectetdPdfs'][$res['id']] ) && $_SESSION['selectetdPdfs'][$res['id']] == 1 ? 'checked' : '' ) ?>  value="1" >
+									<span class="mdl-switch__label"></span>
+								</label>
+							</div>
+							<div class="downloader">
+								<a href="Documents/<?php echo $res['filename'] ?>" target="_blank">
+									<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="button">
+										<i class="material-icons">file_download</i>
+									</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<div><button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" name="search-results-submit">Übernehmen</button></div>
+			<?php 
+			}
+			else{
+
+				echo Main::$Display->get('result');
+
+			}
+			?>
+			</form>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>

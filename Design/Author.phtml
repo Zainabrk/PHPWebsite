@@ -1,0 +1,158 @@
+<?php
+ /**
+ * A PHTML file which contains the Author visualization
+ */
+ 
+/**
+ * A Template which contains the Author visualization
+ *
+ * @category   Design
+ * @package    Design
+ * @author     Tim Steinbrecher
+ * @version    Release: 1.0
+ */
+ ?>
+<div class="mdl-grid mdl-components">
+	<div class="mdl-cell mdl-cell--8-col">
+		<div id="author" class="mdl-grid">
+		<?php
+		if( is_array( Main::$Display->get('result') ) ){
+			$res = Main::$Display->get('result');
+			?>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<div id="author-name"><?php  echo $res['author'];  ?></div>			
+				<?php if( !is_null( $res['institution'] ) ){ ?>
+				<div id="author-institution">
+					<span class="docs-text-styling">
+						<h1>Institution</h1>
+					 </span>
+					 <div class="institution"><?php echo $res['institution']; ?></div>
+				</div>
+				<?php } ?>
+				<?php if( Main::$Display->get('pdfs') !== false ){ ?>
+				<div id="author-publications">
+					<span class="docs-text-styling">
+						<h1>Publikationen</h1>
+					 </span>
+					 <?php foreach( Main::$Display->get('pdfs') as $pdf ){ ?>
+						<div class="publications"><a href="Info?id=<?php echo $pdf['id'] ?>"><?php echo $pdf['title']; ?></a></div>
+					 <?php }; ?>
+				</div>
+				<?php } ?>
+				<?php if( Main::$Display->get('bibs') !== false ){ ?>
+				<div id="author-references">
+					<span class="docs-text-styling">
+						<h1>Referenzen</h1>
+					 </span>
+					 <?php foreach( Main::$Display->get('bibs') as $bibs ){ ?>
+						<div class="references"><?php echo $bibs['title']; ?></div>
+					 <?php }; ?>
+				</div>
+				<?php }?>
+			</div>
+		<?php }
+		elseif( is_array( Main::$Display->get('author_liste') ) ){
+			$res = Main::$Display->get('author_liste');
+			?>	
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				 <div class="mdl-card__title">
+					<h2 class="mdl-card__title-text">Autorensuche</h2>
+				</div>
+				 <form action="Author" method="GET">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="search" name="search" value="<?php echo ( isset( $post['search'] ) && trim( $post['search'] ) !== '' ? $post['search'] : '' ); ?>">
+						<label class="mdl-textfield__label" for="search">Suchen</label>
+					</div>
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Suchen</button>
+				</form>
+			</div>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				 <div class="mdl-card__title">
+					<h2 class="mdl-card__title-text">Autorenliste</h2>
+				</div>
+				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+					<thead>
+						<tr>
+							<th class="mdl-data-table__cell--non-numeric">Name</th>
+							<th class="mdl-data-table__cell--non-numeric">Institution</th>
+							<th class="mdl-data-table__cell--non-numeric">Location</th>
+						</tr>
+					</thead>
+					<tbody>
+					 <?php foreach( $res as $author ){ ?>
+						<tr>
+							<td class="mdl-data-table__cell--non-numeric"><a href="Author?id=<?php echo $author['id'] ?>"><?php echo $author['author']; ?></a></td>
+							<td class="mdl-data-table__cell--non-numeric"><a href="Map?id=<?php echo $author['id'] ?>"><?php echo $author['institution']; ?></a></td>
+							<td class="mdl-data-table__cell--non-numeric"><a href="Location?id=<?php echo $author['id'] ?>"><?php echo $author['location']; ?></a></td>
+						</tr>
+					 <?php }; ?>
+					</tbody>
+				</table>
+			</div>
+			<?php 
+		}
+		elseif( is_array( Main::$Display->get('author_search') ) ){
+			$res = Main::$Display->get('author_search');
+			?>	
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<span class="docs-text-styling">
+					<h1>Autorenliste</h1>
+				 </span>
+				 <form action="Author" method="GET">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="search" name="search" value="<?php echo ( isset( $_GET['search'] ) && trim( $_GET['search'] ) !== '' ? $_GET['search'] : '' ); ?>">
+						<label class="mdl-textfield__label" for="search">Suchen</label>
+					</div>
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Suchen</button>
+				</form>
+			</div>
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-textfield--full-width">
+						<thead>
+							<tr>
+								<th class="mdl-data-table__cell--non-numeric">Name</th>
+								<th class="mdl-data-table__cell--non-numeric">Institution</th>
+								<th class="mdl-data-table__cell--non-numeric">Location</th>
+							</tr>
+						</thead>
+						<tbody>
+						 <?php foreach( $res as $author ){ ?>
+							<tr>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Author?id=<?php echo $author['id'] ?>"><?php echo $author['author']; ?></a></td>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Map?id=<?php echo $author['id'] ?>"><?php echo $author['institution']; ?></a></td>
+								<td class="mdl-data-table__cell--non-numeric"><a href="Location?id=<?php echo $author['id'] ?>"><?php echo $author['location']; ?></a></td>
+							</tr>
+						 <?php }; ?>
+						</tbody>
+					</table>
+			</div>
+				<?php 
+		}
+		elseif(null !== Main::$Display->get('author_search') ){
+			$res = Main::$Display->get('author_search');
+			?>	
+			<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col col-padding">
+				<span class="docs-text-styling">
+					<h1>Autorenliste</h1>
+				 </span>
+				 <form action="Author" method="GET">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="search" name="search" value="<?php echo ( isset( $_GET['search'] ) && trim( $_GET['search'] ) !== '' ? $_GET['search'] : '' ); ?>">
+						<label class="mdl-textfield__label" for="search">Suchen</label>
+					</div>
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Suchen</button>
+				</form>
+				<?php echo $res; ?>
+			</div>
+		<?php }
+		else{
+
+			echo Main::$Display->get('error');
+
+		}
+		?>
+		</div>
+	</div>
+	<?php Main::getSelectedPdfsContent(); ?>
+</div>
+
